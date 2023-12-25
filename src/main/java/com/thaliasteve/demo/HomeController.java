@@ -37,4 +37,8 @@ public class HomeController {
         System.out.println((char)27 + "[97;43m"+ storyItemsRepo +(char)27+"[0m");
         return items;
     }
+
+    public void getTopNewsItemsLegacy() {
+
+    }
 }

@@ -29,9 +29,13 @@ public class HomeControllerTest {
 
 
     @Test
-    void testGetTopNewsItems() {
+    void testGetTopNewsItemsRx() {
         List items = sut.GetTopNewsItems();
         assertThat(items.size()).isEqualTo(10);
     }
 
+    @Test
+    void testGetTopNews2() {
+        var result = sut.getTopNewsItemsLegacy()
+    }
 }
