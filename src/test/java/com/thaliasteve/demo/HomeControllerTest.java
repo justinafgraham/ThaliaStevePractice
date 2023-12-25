@@ -15,9 +15,16 @@ public class HomeControllerTest {
     /*sut system under test */
     private HomeController sut;
 
+    @Autowired
+     StoryItemsRepo storyItemsRepo;
+
+//    public HomeControllerTest(StoryItemsRepo storyItemsRepo) {
+//        this.storyItemsRepo = storyItemsRepo;
+//    }
+
     @BeforeEach
     public void setup() {
-        this.sut = new HomeController();
+        this.sut = new HomeController(storyItemsRepo);
     }
 
 
