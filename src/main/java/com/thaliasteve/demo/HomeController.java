@@ -6,8 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 @RestController
 public class HomeController {
@@ -15,7 +18,7 @@ public class HomeController {
 //    @Autowired
 //    HackerNewsService hackerNewsService;
 
-//    @Autowired
+    //    @Autowired
     private final StoryItemsRepo storyItemsRepo;
 
     public HomeController(StoryItemsRepo storyItemsRepo) {
@@ -26,19 +29,26 @@ public class HomeController {
     public List<StoryItem> GetTopNewsItems() {
         List<StoryItem> items = new ArrayList<>();
         new HackerNewsService()
-                .getTopStories(10)
+                .getTopStories()
                 .subscribe(items::add);
 
-        items.stream().forEach(item->{
-            System.out.println((char)27 + "[97;43m"+ item.toString() +(char)27+"[0m");
-            storyItemsRepo.save(item);
-        });
+//        items.stream().forEach(item -> {
+//            storyItemsRepo.save(item);
+//        });
 
-        System.out.println((char)27 + "[97;43m"+ storyItemsRepo +(char)27+"[0m");
         return items;
     }
 
-    public void getTopNewsItemsLegacy() {
 
+    public List<?> getTop10HttpStream() {
+        var result = new HackerNewsService().getTop10HttpStream();
+
+        return result;
+    }
+
+    public List<?> getTop10Futures() throws URISyntaxException, IOException, InterruptedException, ExecutionException {
+        var result = new HackerNewsService().getTop10Futures();
+
+        return result;
     }
 }
