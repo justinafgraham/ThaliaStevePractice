@@ -2,12 +2,18 @@ package com.thaliasteve.demo.services;
 
 import com.google.gson.GsonBuilder;
 import com.thaliasteve.demo.models.StoryItem;
+import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.internal.operators.flowable.FlowableObserveOn;
+import io.reactivex.rxjava3.schedulers.Schedulers;
+import io.reactivex.rxjava3.subscribers.DisposableSubscriber;
+import org.reactivestreams.Subscription;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import rx.Observable;
+import rx.Scheduler;
 
 import java.io.IOException;
 import java.net.URI;
@@ -16,13 +22,12 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 import static java.net.http.HttpResponse.BodyHandlers.ofString;
-import static java.util.stream.Collectors.toList;
 
 @Service
 public class HackerNewsService {
@@ -42,10 +47,10 @@ public class HackerNewsService {
         hackerNewsApi = retrofit.create(HackerNewsApi.class);
     }
 
-    public Observable<StoryItem> getTopStories() {
+    public Observable<StoryItem> getTopStoriesRetrofit() {
         return hackerNewsApi.listOfTopStoryIDs()
                 .flatMapIterable(x -> x)
-                .limit(TOP_LIMIT)
+                .take(TOP_LIMIT)
                 .flatMap(itemId -> hackerNewsApi.getStoryItem(itemId.toString()));
     }
 
@@ -61,7 +66,7 @@ public class HackerNewsService {
                 .map(HttpRequest.Builder::build)
                 .toList();
 
-        List<StoryItem> storyItems = requests.stream()
+        List<StoryItem> storyItems = requests.parallelStream()
                 .map(request -> {
                     try {
                         return client.send(request, ofString());
@@ -110,6 +115,29 @@ public class HackerNewsService {
         return results;
     }
 
+
+    public List<StoryItem> getTopStoriesRxJava() {
+        List<Integer> topIds = Arrays.stream(Objects.requireNonNull(
+                new RestTemplate().getForEntity(baseurl + "topstories.json",
+                                                Integer[].class).getBody())).limit(TOP_LIMIT).toList();
+
+        Flowable<StoryItem> items = Flowable.fromIterable(topIds)
+                .map(this::buildUri)
+                .parallel(10)
+                .runOn(Schedulers.io())
+                .map(itemUri -> {
+                    var item =  new RestTemplate().getForEntity(itemUri, StoryItem.class).getBody();
+                    return item;
+                })
+                .sequential();
+
+        items.subscribe(x->{
+            System.out.println((char)27 + "[97;43m"+ x.getId() +(char)27+"[0m");
+        });
+        return null;
+    }
+
+
     private URI buildUri(Integer id) {
         try {
             return new URI(baseurl + "item/" + id + ".json");
@@ -117,6 +145,7 @@ public class HackerNewsService {
             throw new RuntimeException(e);
         }
     }
+
 }
 
 
