@@ -34,22 +34,28 @@ public class HomeControllerTest {
 
 
     @Test
-    void testGetTopNewsItemsRx() {
+    void testGetTopNewsItemsRetrofix() {
 //        31.9
-        List result = sut.GetTopNewsItems();
-        assertThat(result.size()).isEqualTo(itemCount);
+        List actual = sut.GetTopNewsItems();
+        assertThat(actual.size()).isEqualTo(itemCount);
     }
 
     @Test
     void testGetTopNewsHttpStream() {
-//        32.8
-        var result = sut.getTop10HttpStream();
-        assertThat(result.size()).isEqualTo(itemCount);
+//        0.7
+        var actual = sut.getTop10HttpStream();
+        assertThat(actual.size()).isEqualTo(itemCount);
     }
     @Test
     void testGetTopNewsFutures() throws URISyntaxException, IOException, InterruptedException, ExecutionException {
-//        0.9 seconds
-        var result = sut.getTop10Futures();
-        assertThat(result.size()).isEqualTo(itemCount);
+//        2.4 - 0.7 seconds
+        var actual = sut.getTop10Futures();
+        assertThat(actual.size()).isEqualTo(itemCount);
+    }
+
+    @Test
+    void testGetTopNewsRxJava() {
+        var actual = sut.getTopStoriesRxJava();
+//        assertThat(actual.size()).isEqualTo(itemCount);
     }
 }
