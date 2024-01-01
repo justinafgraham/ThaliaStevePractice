@@ -2,7 +2,6 @@ package com.thaliasteve.demo;
 
 import com.thaliasteve.demo.models.StoryItem;
 import com.thaliasteve.demo.services.HackerNewsService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,7 +28,7 @@ public class HomeController {
     public List<StoryItem> GetTopNewsItems() {
         List<StoryItem> items = new ArrayList<>();
         new HackerNewsService()
-                .getTopStories()
+                .getTopStoriesRetrofit()
                 .subscribe(items::add);
 
 //        items.stream().forEach(item -> {
@@ -39,9 +38,18 @@ public class HomeController {
         return items;
     }
 
+    public List<StoryItem> getTopStoriesRxJava() {
+        var result = new HackerNewsService().getTopStoriesRxJava();
+        return result;
+    }
+
+
+    public List<?> getTop10RestTemplate() {
+        return new HackerNewsService().getTop10RestTemplate();
+    }
 
     public List<?> getTop10HttpStream() {
-        var result = new HackerNewsService().getTop10HttpStream();
+        var result = new HackerNewsService().getTop10HttpClient();
 
         return result;
     }
@@ -51,4 +59,5 @@ public class HomeController {
 
         return result;
     }
+
 }
