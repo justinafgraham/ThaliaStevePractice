@@ -1,7 +1,8 @@
 package com.thaliasteve.demo;
 
-import com.thaliasteve.demo.models.StoryItem;
+import com.thaliasteve.demo.models.NewsItem;
 import com.thaliasteve.demo.services.HackerNewsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,39 +15,16 @@ import java.util.concurrent.ExecutionException;
 @RestController
 public class HomeController {
 
+    @Autowired
+    HackerNewsService hackerNewsService;
+
 //    @Autowired
-//    HackerNewsService hackerNewsService;
+//    private final StoryItemsRepo storyItemsRepo;
 
-    //    @Autowired
-    private final StoryItemsRepo storyItemsRepo;
+//    public HomeController(StoryItemsRepo storyItemsRepo) {
+//        this.storyItemsRepo = storyItemsRepo;
+//    }
 
-    public HomeController(StoryItemsRepo storyItemsRepo) {
-        this.storyItemsRepo = storyItemsRepo;
-    }
-
-    @GetMapping("/news")
-    public List<StoryItem> GetTopNewsItems() {
-        List<StoryItem> items = new ArrayList<>();
-        new HackerNewsService()
-                .getTopStoriesRetrofit()
-                .subscribe(items::add);
-
-//        items.stream().forEach(item -> {
-//            storyItemsRepo.save(item);
-//        });
-
-        return items;
-    }
-
-    public List<StoryItem> getTopStoriesRxJava() {
-        var result = new HackerNewsService().getTopStoriesRxJava();
-        return result;
-    }
-
-
-    public List<?> getTop10RestTemplate() {
-        return new HackerNewsService().getTop10RestTemplate();
-    }
 
     public List<?> getTop10HttpStream() {
         var result = new HackerNewsService().getTop10HttpClient();
@@ -54,10 +32,5 @@ public class HomeController {
         return result;
     }
 
-    public List<?> getTop10Futures() throws URISyntaxException, IOException, InterruptedException, ExecutionException {
-        var result = new HackerNewsService().getTop10Futures();
-
-        return result;
-    }
 
 }

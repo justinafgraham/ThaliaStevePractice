@@ -16,36 +16,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class HomeControllerTest {
 
     /*sut system under test */
+    @Autowired
     private HomeController sut;
 
-    @Autowired
-    StoryItemsRepo storyItemsRepo;
 
 //    public HomeControllerTest(StoryItemsRepo storyItemsRepo) {
 //        this.storyItemsRepo = storyItemsRepo;
 //    }
 
-    int itemCount = 500;
+    int itemCount = 10;
 
     @BeforeEach
     public void setup() {
-        this.sut = new HomeController(storyItemsRepo);
     }
 
 
-    @Test
-    void testGetTopNewsItemsRetrofix() {
-//        31.9
-        List actual = sut.GetTopNewsItems();
-        assertThat(actual.size()).isEqualTo(itemCount);
-    }
-
-    @Test
-    void testGetTopNewsRestTemplate() {
-// 33
-        var actual = sut.getTop10RestTemplate();
-        assertThat(actual.size()).isEqualTo(itemCount);
-    }
 
     @Test
     void testGetTopNewsHttpStream() {
@@ -54,16 +39,4 @@ public class HomeControllerTest {
         assertThat(actual.size()).isEqualTo(itemCount);
     }
 
-    @Test
-    void testGetTopNewsFutures() throws URISyntaxException, IOException, InterruptedException, ExecutionException {
-//        2.4 - 0.7 seconds
-        var actual = sut.getTop10Futures();
-        assertThat(actual.size()).isEqualTo(itemCount);
-    }
-
-    @Test
-    void testGetTopNewsRxJava() {
-        var actual = sut.getTopStoriesRxJava();
-//        assertThat(actual.size()).isEqualTo(itemCount);
-    }
 }
