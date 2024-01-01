@@ -1,6 +1,6 @@
 package com.thaliasteve.demo.repositories;
 
-import com.thaliasteve.demo.dto.StoryItemDto;
+import com.thaliasteve.demo.models.StoryItemDto;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

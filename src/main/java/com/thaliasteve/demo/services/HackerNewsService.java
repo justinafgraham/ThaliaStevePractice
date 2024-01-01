@@ -1,8 +1,8 @@
 package com.thaliasteve.demo.services;
 
 import com.google.gson.GsonBuilder;
-import com.thaliasteve.demo.dto.StoryItemDto;
 import com.thaliasteve.demo.models.NewsItem;
+import com.thaliasteve.demo.models.StoryItemDto;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -23,7 +23,23 @@ public class HackerNewsService {
     private final int TOP_LIMIT = 10;
 
 
-    public List<StoryItemDto> getTop10HttpClient() {
+    public List<StoryItemDto> getRestTemplate() {
+        List<Integer> topIds = Arrays.stream(Objects.requireNonNull(
+                        new RestTemplate()
+                                .getForEntity(baseurl + "topstories.json", Integer[].class)
+                                .getBody()))
+                .limit(TOP_LIMIT)
+                .toList();
+
+        List<URI> uris = topIds.stream().map(this::buildUri).toList();
+
+        List<StoryItemDto> storyItems = uris.stream()
+                .map(uri->new RestTemplate().getForEntity(uri, StoryItemDto.class).getBody())
+                .toList();
+
+        return storyItems;
+    }
+    public List<StoryItemDto> getTopStoryItems() {
         List<Integer> topIds = Arrays.stream(Objects.requireNonNull(
                         new RestTemplate()
                                 .getForEntity(baseurl + "topstories.json", Integer[].class)

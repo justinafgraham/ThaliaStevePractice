@@ -1,16 +1,12 @@
 package com.thaliasteve.demo;
 
-import com.thaliasteve.demo.models.NewsItem;
+import com.thaliasteve.demo.models.StoryItemDto;
+import com.thaliasteve.demo.repositories.StoryItemRepo;
 import com.thaliasteve.demo.services.HackerNewsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 @RestController
 public class HomeController {
@@ -18,19 +14,27 @@ public class HomeController {
     @Autowired
     HackerNewsService hackerNewsService;
 
-//    @Autowired
-//    private final StoryItemsRepo storyItemsRepo;
+    @Autowired
+    private StoryItemRepo storyItemRepo;
+
 
 //    public HomeController(StoryItemsRepo storyItemsRepo) {
 //        this.storyItemsRepo = storyItemsRepo;
 //    }
 
 
-    public List<?> getTop10HttpStream() {
-        var result = new HackerNewsService().getTop10HttpClient();
+    public List<StoryItemDto> getTopStoryItems() {
+        var result = new HackerNewsService().getTopStoryItems();
+        storyItemRepo.saveAll(result);
 
         return result;
     }
 
 
+    public List<StoryItemDto> getRestTemplate() {
+        var result = new HackerNewsService().getRestTemplate();
+        storyItemRepo.saveAll(result);
+
+        return result;
+    }
 }

@@ -1,6 +1,5 @@
 package com.thaliasteve.demo.models;
 
-import com.thaliasteve.demo.dto.CommentDto;
 import jakarta.persistence.*;
 import lombok.Data;
 
